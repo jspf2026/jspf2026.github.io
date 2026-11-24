@@ -410,7 +410,11 @@ function norm(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 DATA.forEach(c=>{c.title=fix(c.title);c.body=fix(c.body);c.day=(c.session===1||c.session===2||c.session===3||c.session===4||c.session==='P')?'mer':'jeu';
   c.kind=c.code[0]==='C'?'inv':(c.code[0]==='O'?'oral':'poster');
   c.hay=norm([c.title,c.authors,c.presenter,c.aff.join(' '),c.body,c.code].join(' '));});
-function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e;}
+const GEN='Ulva|Palmaria|Gelidium|Cystoseira|Laminaria|Saccharina|Pleurosigma|Dictyota|Himanthalia|Ectocarpus|Gracilaria|Solieria|Porphyra|Lepidodinium|Chromera|Chaetoceros|Fucus|Prymnesium|Teleaulax|Haliotis|Hypnea|Tetraselmis|Auxenochlorella|Closterium|Osmundea|Chondracanthus|Corallina|Phaeodactylum|Chlamydomonas|Fragilariopsis|Sargassum|Chondrus|Halymenia|Kuckuckia|Spongonema|Anatheca';
+const EPI='tuberculata coccinea|peracerosum-strigosum-littorale|latissima|parvum|amphioxeia|palmata|lacinulata|elongata|strigosum|gracilis|musciformis|chordalis|reinhardtii|striata|montagnei|dichotoma|hyperborea|pinnatifida|berteroi|tricornutum|cylindrus|chlorophorum|velia|neogracilis|digitata|ochroleuca|muticum|crispus|siliculosus|crouaniorum|floresii|plantarum';
+const SPRE=new RegExp('\\b(?:(?:'+GEN+')(?:\\s+(?:'+EPI+'))?|[A-Z]\\.\\s(?:'+EPI+')|in vitro|in vivo|in situ|et al\\.)(?![\\p{L}-])','gu');
+function addIt(e,txt){let last=0;txt.replace(SPRE,(m,off)=>{if(off>last)e.appendChild(document.createTextNode(txt.slice(last,off)));e.appendChild(document.createElement('i')).textContent=m;last=off+m.length;return m;});if(last<txt.length)e.appendChild(document.createTextNode(txt.slice(last)));}
+function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)addIt(e,String(txt));return e;}
 const li18=l=>lang==='en'?l.replace(/(\d{1,2})h(\d{2})/g,'$1:$2'):l;
 const pres=p=>lang==='en'?p.replace(/\((Chercheu(r|se) invit[ée]e?)\)/,'(invited speaker)'):p;
 const pick=x=>Array.isArray(x)?x[lang==='en'?1:0]:x;
